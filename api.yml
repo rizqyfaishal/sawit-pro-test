@@ -11,48 +11,363 @@
 openapi: "3.0.0"
 info:
   version: 1.0.0
-  title: User Service
+  title: User Service API Specs
   license:
     name: MIT
 servers:
   - url: http://localhost:1323
 paths:
-  /hello:
-    get:
-      summary: This is just a test endpoint to get you started. Please delete this endpoint.
-      operationId: hello
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: integer
+  /users/register:
+    post:
+      summary: "Register a user"
+      description: "Register a user with basic personal data"
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUserForm"
+            example:
+              full_name: "Rizqy Faishal Tanjung"
+              phone_number: "+6285773801038"
+              password: "asdasd123"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/RegisterUserForm"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/RegisterUserForm"
+            example:
+              full_name: "Rizqy Faishal Tanjung"
+              phone_number: "+6285773801038"
+              password: "asdasd123"
+          text/plain:
+            schema:
+              type: string
       responses:
         '200':
-          description: Test return
-          content:
-            application/json:    
-              schema:
-                $ref: "#/components/schemas/HelloResponse"
-        '404':
-          description: Not found
+          description: Successful response after registering an user | Return a User
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: "#/components/schemas/User"
+              example:
+                id: 1
+                full_name: "Rizqy Faishal Tanjung"
+                phone_number: "+6285773801038"
+                created_at: "2024-04-16T16:50:16+07:00"
+                updated_at: "2024-04-18T16:50:16+07:00"
+                login_success_count: 30
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/User"
+        '400':
+          description: |
+            Error response after registering an user, with detailed each field's validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterUserBadRequestResponse"
+              example:
+                full_name: "Full name must have minimum 3 characters long"
+                phone_number: "Phone number must starts with +62"
+                password: "Password must have minimum 3 characters long"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/RegisterUserBadRequestResponse"
+  /users/login:
+    post:
+      summary: Login
+      description: |
+        Authenticate user's and return JSON Web Token to authorize next request.
+      operationId: userLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLoginForm"
+            example:
+              phone_number: "+6285773801038"
+              password: "asdasd123"
+      responses:
+        '200':
+          description: Successful | Return JWT
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserLoginResponse"
+              example:
+                token: |
+                  eyJjbGllbnRfaWQiOiJZekV6TUdkb01ISm5PSEJpT0cxaWJEaHlOVEE9IiwicmVzcG9uc2Vf
+                  dHlwZSI6ImNvZGUiLCJzY29wZSI6ImludHJvc2NwZWN0X3Rva2VucywgcmV2b2tlX3Rva2Vu
+                  cyIsImlzcyI6ImJqaElSak0xY1hwYWEyMXpkV3RJU25wNmVqbE1iazQ0YlRsTlpqazNkWEU9
+                  Iiwic3ViIjoiWXpFek1HZG9NSEpuT0hCaU9HMWliRGh5TlRBPSIsImF1ZCI6Imh0dHBzOi8v
+                  bG9jYWxob3N0Ojg0NDMve3RpZH0ve2FpZH0vb2F1dGgyL2F1dGhvcml6ZSIsImp0aSI6IjE1
+                  MTYyMzkwMjIiLCJleHAiOiIyMDIxLTA1LTE3VDA3OjA5OjQ4LjAwMCswNTQ1In0
+                expired_at: 2024-04-18T16:50:16+07:00
+        '400':
+          description: Bad Request | Unsuccessful Login Attmptt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginBadRequestErrorResponse"
+              example:
+                error_message: "Login failed. Please enter correct phone number and password."
+  /users/me:
+    get:
+      summary: Get User Profile
+      description: |
+        Get public profile information about a app user.
+      operationId: getUser
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successfully | Returned a User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+              example:
+                id: 1
+                full_name: "Rizqy Faishal Tanjung"
+                phone_number: "+6285773801038"
+                created_at: "2024-04-16T16:50:16+07:00"
+                updated_at: "2024-04-18T16:50:16+07:00"
+                login_success_count: 30
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedErrorResponse"
+              example:
+                error_message: "Your request is made with invalid credential"
+  /users:
+    put:
+      summary: "Update user profile"
+      description: "Update personal profile data (phone number of full name)"
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: |
+          The request body will accept 2 fields: Phone number OR Full name. So, it must have 1
+          minimum fields must be filled. If two of fields empty or not set, it will have validation error.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserForm"
+            examples:
+               OnlyFullName:
+                 value:
+                    full_name: "New Rizqy Faishal Tanjung"
+               OnlyPhoneNumber:
+                 value:
+                   phone_number: "+6285773801038"
+               FullNameAndPhoneNumber:
+                 value:
+                   full_name: "New Rizqy Faishal Tanjung"
+                   phone_number: "+6285773801038"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/UpdateUserForm"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/UpdateUserForm"
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Successful | Return a User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+              examples:
+                OnlyFullName:
+                  value:
+                    id: 1
+                    full_name: "New Rizqy Faishal Tanjung"
+                    phone_number: "+6285773801038"
+                    created_at: "2024-04-16T16:50:16+07:00"
+                    updated_at: "2024-04-18T16:50:16+07:00"
+                    login_success_count: 30
+                OnlyPhoneNumber:
+                  value:
+                    id: 1
+                    full_name: "Rizqy Faishal Tanjung"
+                    phone_number: "+6285773801038"
+                    created_at: "2024-04-16T16:50:16+07:00"
+                    updated_at: "2024-04-18T16:50:16+07:00"
+                    login_success_count: 30
+                FullNameAndPhoneNumber:
+                  value:
+                    id: 1
+                    full_name: "New Rizqy Faishal Tanjung"
+                    phone_number: "+6285773801038"
+                    created_at: "2024-04-16T16:50:16+07:00"
+                    updated_at: "2024-04-18T16:50:16+07:00"
+                    login_success_count: 30
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedErrorResponse"
+              example:
+                error_message: "Your request is unauthorized."
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConflictErrorResponse"
+              example:
+                error_message: "Your new phone number is already used (conflicted)."
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
-    HelloResponse:
+    User:
       type: object
       required:
-        - message
+        - id
+        - full_name
+        - phone_number
+        - created_at
+        - updated_at
+        - login_success_count
       properties:
-        message:
+        id:
+          type: integer
+          description: The App User ID for this user.
+        full_name:
           type: string
-    ErrorResponse:
+          description: The name displayed on the User's profile.
+        phone_number:
+          type: string
+          description: | 
+            Registered phone number for this user.
+            The phone number only for one user (unique)
+        created_at:
+          type: string
+          description: |
+            The timestamp when the User is created. Date format used is ISO 8601.
+        updated_at:
+          type: string
+          description: |
+            The timestamp when the User is on latest update. Date format used is ISO 8601.
+        login_success_count:
+          type: integer
+          description: |
+            Number of successfully login attempt
+    UpdateUserForm:
+      description: |
+        The request body will accept 2 fields: Phone number OR Full name. So, it must have 1
+        minimum fields must be filled. If two of fields empty or not set, it will have validation error.
+      type: object
+      minProperties: 1
+      properties:
+        full_name:
+          type: string
+          description: | 
+            The new full name. Minimum 3 characters and  maximum 60 characters Long.
+        phone_number:
+          type: string
+          description: |
+            New phone number for this user.
+            Must starts with +62. Minimum 10 characters 
+            and maximum 13 characters long.
+            The phone number only for one user (unique)
+    RegisterUserForm:
       type: object
       required:
-        - message
+        - full_name
+        - phone_number
+        - password
       properties:
-        message:
+        full_name:
           type: string
+          description: |
+            The name displayed on the User's profile.
+            Minimum 3 characters and  maximum 60 characters Long.
+        phone_number:
+          type: string
+          description: |
+            Valid Phone number. Must starts with +62. Minimum 10 characters 
+            and maximum 13 characters long.
+        password:
+          type: string
+          description: |
+            User's password. Minimum 6 characters and maximum 64 characters long.
+            At least containing 1 capital characters, 1 number and 1 special alpha-numeric 
+            characters.
+    RegisterUserBadRequestResponse:
+      type: object
+      required:
+        - full_name
+        - phone_number
+        - password
+      properties:
+        full_name:
+          type: string
+          description: Message related validation error for full name
+        phone_number:
+          type: string
+          description: Message related validation error for phone number
+        password:
+          type: string
+          description: Message related validation error for password
+    UserLoginForm:
+      type: object
+      required:
+        - phone_number
+        - password
+      properties:
+        phone_number:
+          type: string
+          description: User's phone number
+        password:
+          type: string
+          description: User's password
+    UserLoginResponse:
+      type: object
+      required:
+        - token
+        - expired_at
+      properties:
+        token:
+          type: string
+          description: JWT returned after successfully authenticated.
+        expired_at:
+          type: string
+          description: Timestamp when the JWT will be expired. Date format used is ISO 8601.
+    UnauthorizedErrorResponse:
+      type: object
+      required:
+        - error_message
+      properties:
+        error_message:
+          type: string
+          description: Error message related unauthorized request
+    ConflictErrorResponse:
+      type: object
+      required:
+        - error_message
+      properties:
+        error_message:
+          type: string
+          description: Error message related conflict phone number
+    LoginBadRequestErrorResponse:
+      type: object
+      required:
+        - error_message
+      properties:
+        error_message:
+          type: string
+          description: Error message related failed login attempt
