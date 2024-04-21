@@ -117,7 +117,8 @@ func (a AuthenticationService) Authenticate(form forms.UserLoginForm) (*Authenti
 	result.HasValidationErrors = false
 	result.ValidationErrors = map[string]string{}
 	result.Credential = &AuthenticationCredential{
-		Token: *jwtToken,
+		Token:  *jwtToken,
+		UserId: user.Id,
 	}
 
 	return result, nil

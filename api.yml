@@ -15,7 +15,7 @@ info:
   license:
     name: MIT
 servers:
-  - url: http://localhost:1323
+  - url: http://localhost:8080
 paths:
   /users/register:
     post:
@@ -110,7 +110,7 @@ paths:
                   Iiwic3ViIjoiWXpFek1HZG9NSEpuT0hCaU9HMWliRGh5TlRBPSIsImF1ZCI6Imh0dHBzOi8v
                   bG9jYWxob3N0Ojg0NDMve3RpZH0ve2FpZH0vb2F1dGgyL2F1dGhvcml6ZSIsImp0aSI6IjE1
                   MTYyMzkwMjIiLCJleHAiOiIyMDIxLTA1LTE3VDA3OjA5OjQ4LjAwMCswNTQ1In0
-                expired_at: 2024-04-18T16:50:16+07:00
+                user_id: 1
         '400':
           description: Bad Request | Unsuccessful Login Attmptt
           content:

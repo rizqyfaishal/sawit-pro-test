@@ -2,7 +2,6 @@ package services
 
 import (
 	"github.com/SawitProRecruitment/UserService/pojos"
-	"time"
 )
 
 type UpdateResult struct {
@@ -18,8 +17,8 @@ type RegisterResult struct {
 }
 
 type AuthenticationCredential struct {
-	Token     string    `json:"token"`
-	ExpiredIn time.Time `json:"expired_in"`
+	Token  string `json:"token"`
+	UserId int64  `json:"user_id"`
 }
 
 type AuthenticationResult struct {

@@ -5,6 +5,8 @@ services:
       - "8080:1323"
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/database?sslmode=disable
+      APPLICATION_NAME: simple-user-service
+      LOGIN_EXPIRATION_DURATION: 24h
     depends_on:
       db:
         condition: service_healthy

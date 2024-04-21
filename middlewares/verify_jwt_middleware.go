@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github.com/SawitProRecruitment/UserService/consts"
+	"github.com/SawitProRecruitment/UserService/responses"
 	"github.com/SawitProRecruitment/UserService/services"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -17,6 +18,7 @@ func (v *VerifyJwtMiddleware) getWhiteListRoute() map[string]string {
 	return map[string]string{
 		"/users/register": "POST",
 		"/users/login":    "POST",
+		"/":               "GET",
 	}
 }
 
@@ -34,10 +36,12 @@ func (v *VerifyJwtMiddleware) Process(next echo.HandlerFunc) echo.HandlerFunc {
 		isTokenAllowed, userId := v.isTokenAllowed(request.Header.Get("Authorization"))
 
 		if isTokenAllowed == false {
-			return c.JSON(http.StatusBadRequest, "Your request is made with invalid credential")
+			return c.JSON(http.StatusBadRequest, responses.BadRequestResponse{
+				ErrorMessage: "Your request is made with invalid credential",
+			})
 		}
 
-		c.Set(consts.ContextAuthorizedUsedId, userId)
+		c.Set(consts.ContextAuthorizedUsedId, *userId)
 
 		return next(c)
 	}

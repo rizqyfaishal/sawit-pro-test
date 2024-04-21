@@ -5,3 +5,4 @@ vendor
 cert
 cover.html
 cover.out
+.env

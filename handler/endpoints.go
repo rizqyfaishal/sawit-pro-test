@@ -92,7 +92,7 @@ func (s *Server) Login(ctx echo.Context) error {
 
 	if authenticationResult.IsUserNotFound || authenticationResult.IsSuccess == false {
 		badRequestResponse := responses.BadRequestResponse{
-			ErrorMessage: "Please login with valid credential",
+			ErrorMessage: "Login failed. Please enter correct phone number and password.",
 		}
 		return ctx.JSON(http.StatusBadRequest, badRequestResponse)
 	}

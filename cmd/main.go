@@ -52,6 +52,7 @@ func main() {
 }
 
 func initServices(repo repository.UserRepositoryInterface) services.Services {
+
 	passwordAuth := modules.BcryptPasswordAuth{}
 
 	userService := services.NewUserService(repo, passwordAuth)
