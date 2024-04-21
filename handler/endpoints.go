@@ -53,7 +53,9 @@ func (s *Server) UpdateUser(ctx echo.Context) error {
 		}
 
 		if user != nil {
-			return ctx.JSON(http.StatusConflict, "Conflicted")
+			return ctx.JSON(http.StatusConflict, responses.BadRequestResponse{
+				ErrorMessage: "Conflicted",
+			})
 		}
 	}
 
