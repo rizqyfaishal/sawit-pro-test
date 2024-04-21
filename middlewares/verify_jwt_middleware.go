@@ -36,7 +36,7 @@ func (v *VerifyJwtMiddleware) Process(next echo.HandlerFunc) echo.HandlerFunc {
 		isTokenAllowed, userId := v.isTokenAllowed(request.Header.Get("Authorization"))
 
 		if isTokenAllowed == false {
-			return c.JSON(http.StatusBadRequest, responses.BadRequestResponse{
+			return c.JSON(http.StatusForbidden, responses.BadRequestResponse{
 				ErrorMessage: "Your request is made with invalid credential",
 			})
 		}
