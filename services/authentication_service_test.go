@@ -302,7 +302,8 @@ func (ts *AuthenticationServiceTestSuite) TestAuthenticationService_Authenticate
 				HasValidationErrors: false,
 				ValidationErrors:    map[string]string{},
 				Credential: &AuthenticationCredential{
-					Token: "jwt token",
+					Token:  "jwt token",
+					UserId: 123,
 				},
 			},
 			mock: func() {
