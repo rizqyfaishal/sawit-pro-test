@@ -21,22 +21,22 @@ paths:
     post:
       summary: "Register a user"
       description: "Register a user with basic personal data"
-      operationId: registerUser
+      operationId: register
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RegisterUserForm"
+              $ref: "#/components/schemas/UserRegisterForm"
             example:
               full_name: "Rizqy Faishal Tanjung"
               phone_number: "+6285773801038"
               password: "asdasd123"
           application/xml:
             schema:
-              $ref: "#/components/schemas/RegisterUserForm"
+              $ref: "#/components/schemas/UserRegisterForm"
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/RegisterUserForm"
+              $ref: "#/components/schemas/UserRegisterForm"
             example:
               full_name: "Rizqy Faishal Tanjung"
               phone_number: "+6285773801038"
@@ -46,7 +46,7 @@ paths:
               type: string
       responses:
         '200':
-          description: Successful response after registering an user | Return a User
+          description: Successful responses after registering an user | Return a User
           content:
             application/json:
               schema:
@@ -67,23 +67,29 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RegisterUserBadRequestResponse"
+                $ref: "#/components/schemas/UserRegisterBadRequestResponse"
               example:
                 full_name: "Full name must have minimum 3 characters long"
                 phone_number: "Phone number must starts with +62"
                 password: "Password must have minimum 3 characters long"
             application/xml:
               schema:
-                $ref: "#/components/schemas/RegisterUserBadRequestResponse"
+                $ref: "#/components/schemas/UserRegisterBadRequestResponse"
   /users/login:
     post:
       summary: Login
       description: |
         Authenticate user's and return JSON Web Token to authorize next request.
-      operationId: userLogin
+      operationId: login
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: "#/components/schemas/UserLoginForm"
+            example:
+              phone_number: "+6285773801038"
+              password: "asdasd123"
+          application/x-www-form-urlencoded:
             schema:
               $ref: "#/components/schemas/UserLoginForm"
             example:
@@ -118,7 +124,7 @@ paths:
       summary: Get User Profile
       description: |
         Get public profile information about a app user.
-      operationId: getUser
+      operationId: getMyProfile
       security:
         - bearerAuth: [ ]
       responses:
@@ -284,7 +290,7 @@ components:
             Must starts with +62. Minimum 10 characters 
             and maximum 13 characters long.
             The phone number only for one user (unique)
-    RegisterUserForm:
+    UserRegisterForm:
       type: object
       required:
         - full_name
@@ -307,12 +313,8 @@ components:
             User's password. Minimum 6 characters and maximum 64 characters long.
             At least containing 1 capital characters, 1 number and 1 special alpha-numeric 
             characters.
-    RegisterUserBadRequestResponse:
+    UserRegisterBadRequestResponse:
       type: object
-      required:
-        - full_name
-        - phone_number
-        - password
       properties:
         full_name:
           type: string

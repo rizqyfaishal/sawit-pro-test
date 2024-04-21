@@ -2,3 +2,6 @@ generated
 coverage.out
 vendor
 .idea
+cert
+cover.html
+cover.out

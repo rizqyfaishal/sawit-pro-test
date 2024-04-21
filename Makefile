@@ -18,6 +18,10 @@ init: generate
 test:
 	go test -short -coverprofile coverage.out -v ./...
 
+coverage: test
+	cat coverage.out | grep -v ".mock.gen.go" > cover.out
+	go tool cover -func cover.out
+
 generate: generated generate_mocks
 
 generated: api.yml
@@ -26,7 +30,7 @@ generated: api.yml
 	oapi-codegen --package generated -generate types,server,spec $< > generated/api.gen.go
 
 INTERFACES_GO_FILES := $(shell find repository -name "interfaces.go")
-INTERFACES_GEN_GO_FILES := $(INTERFACES_GO_FILES:%.go=%.mock.gen.go)
+	INTERFACES_GEN_GO_FILES := $(INTERFACES_GO_FILES:%.go=%.mock.gen.go)
 
 generate_mocks: $(INTERFACES_GEN_GO_FILES)
 $(INTERFACES_GEN_GO_FILES): %.mock.gen.go: %.go

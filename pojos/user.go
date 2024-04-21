@@ -10,3 +10,13 @@ type User struct {
 	CreatedAt         time.Time `json:"created_at"`
 	UpdatedAt         time.Time `json:"updated_at"`
 }
+
+type UserWithPassword struct {
+	Id                int64     `json:"id"`
+	PhoneNumber       string    `json:"phone_number"`
+	FullName          string    `json:"full_name"`
+	Password          string    `json:"password"`
+	LoginSuccessCount int64     `json:"login_success_count"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
+}
