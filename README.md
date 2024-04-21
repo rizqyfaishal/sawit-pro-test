@@ -86,3 +86,5 @@ Since there is this update https://github.com/deepmap/oapi-codegen/releases/tag/
 will be update with minimum Go 1.20
 
 ## Mini Review Video
+
+Mini review / demo video available on this link https://drive.google.com/drive/folders/1cORxvxJSaaM7EaCa7D1ZF2CkeJTP9YET?usp=sharing 
